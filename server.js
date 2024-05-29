@@ -1,13 +1,16 @@
+var config = require('./config')
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+//const PORT = process.env.PORT || 8080;
+const PORT = config.port;
+const ROOT = config.default_root;
 
 // Function to serve files or directories
 function serveFileOrDirectory(req, res, next) {
-  const filePath = path.join(__dirname, 'dist', req.params[0]);
+  const filePath = path.join(__dirname, ROOT, req.params[0]);
 
   // Check if the requested path exists
   fs.stat(filePath, (err, stats) => {
@@ -32,7 +35,7 @@ function serveFileOrDirectory(req, res, next) {
         }
 
         // Extract the directory name from the request URL
-        const directoryName = req.params[0] || 'dist'; // Use 'dist' if no directory name is provided
+        const directoryName = req.params[0] || ROOT; // Use ROOT if no directory name is provided
 
         // Generate HTML for the file listing with the correct directory name
         let html = `<h1>File Listing of ${directoryName}</h1><ul>`;
@@ -55,11 +58,11 @@ function serveFileOrDirectory(req, res, next) {
 // Serve files or directories for all routes under '/dist/*'
 app.get('/dist/*', serveFileOrDirectory);
 
-// Serve the files from the 'dist' directory
-app.use('/dist', express.static(path.join(__dirname, 'dist')));
+// Serve the files from the ROOT directory
+app.use('/dist', express.static(path.join(__dirname, ROOT)));
 
-// Serve static files from the 'dist' directory
-app.use(express.static(path.join(__dirname, 'dist')));
+// Serve static files from the ROOT directory
+app.use(express.static(path.join(__dirname, ROOT)));
 
 // Endpoint to check if a path is a file or directory
 app.get('/isFileOrDirPath', async (req, res) => {
