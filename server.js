@@ -61,6 +61,24 @@ app.use('/dist', express.static(path.join(__dirname, 'dist')));
 // Serve static files from the 'dist' directory
 app.use(express.static(path.join(__dirname, 'dist')));
 
+// Endpoint to check if a path is a file or directory
+app.get('/isFileOrDirPath', async (req, res) => {
+  const filePath = req.query.filePath;
+  const absolutePath = path.join(__dirname, filePath);
+  try {
+      const stats = await fs.statSync(absolutePath);
+      if (stats.isFile()) {
+          res.send({ filePath, type: 'file' });
+      } else if (stats.isDirectory()) {
+          res.send({ filePath, type: 'dir' });
+      } else {
+          res.status(400).send({ error: `${absolutePath} Not a valid file or directory`});
+      }
+  } catch (error) {
+      res.status(500).send({ error: `Error checking file or directory ${absolutePath}`});
+  }
+});
+
 // Serve index.html as the default page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
