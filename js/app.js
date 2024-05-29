@@ -44,7 +44,7 @@ import {createSVGWidget} from './svgWidget.js'
 import GtexUtils from "./gtexUtils.js"
 import version from "./version.js"
 import {createCircularViewResizeModal} from "./circularViewResizeModal.js"
-import {loadTracksFromServerWithRegistry} from "./loadTracksFromServerWidget.js"
+import {loadTracksFromServerWidget} from "./loadTracksFromServerWidget.js"
 
 document.addEventListener("DOMContentLoaded", async (event) => await main(document.getElementById('igv-app-container'), igvwebConfig))
 
@@ -180,19 +180,9 @@ async function initializationHelper(browser, container, options) {
         }
     }
 
-    //TODO: Accept selected track file
-    loadTracksFromServerWithRegistry($igvMain,
-        $('#igv-app-track-dropdown-menu'),
-        $('#igv-app-dropdown-local-track-file-input'),
-        initializeDropbox,
-        options.dropboxAPIKey ? $('#igv-app-dropdown-dropbox-track-file-button') : undefined,
-        googleEnabled,
-        $('#igv-app-dropdown-google-drive-track-file-button'),
-        ['igv-app-encode-signals-chip-modal', 'igv-app-encode-signals-other-modal', 'igv-app-encode-others-modal'],
+    // Select the track file from the server
+    loadTracksFromServerWidget($igvMain,
         'igv-app-track-from-server-modal',
-        'igv-app-track-select-modal',
-        GtexUtils,
-        options.trackRegistryFile,
         trackLoader)
 
     createTrackWidgetsWithTrackRegistry($igvMain,

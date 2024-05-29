@@ -149,19 +149,9 @@ function handleOkClick(trackLoadHandler) {
     }
 }
 
-function loadTracksFromServerWithRegistry(
+function loadTracksFromServerWidget(
     $igvMain,
-    $dropdownMenu,
-    $localFileInput,
-    initializeDropbox,
-    $dropboxButton,
-    googleEnabled,
-    $googleDriveButton,
-    encodeTrackModalIds,
     trackFromServerModalId,
-    selectModalIdOrUndefined,
-    GtexUtilsOrUndefined,
-    trackRegistryFile,
     trackLoadHandler
 ) {
     const trackFromServerModal = createTrackServerModal(trackFromServerModalId);
@@ -174,4 +164,4 @@ function loadTracksFromServerWithRegistry(
     $ok.on('click', okHandler);
 }
 
-export { loadTracksFromServerWithRegistry };
+export { loadTracksFromServerWidget };
