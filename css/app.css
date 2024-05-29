@@ -407,4 +407,10 @@ label.dropdown-item {
   right: 10px;
 }
 
+/* Highlight the selected file link */
+#fileList a.selected {
+  font-weight: bold;
+  color: #007bff;
+}
+
 /*# sourceMappingURL=app.css.map */
