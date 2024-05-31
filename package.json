@@ -6,7 +6,7 @@
   "author": "Douglass Turner and Jim Robinson",
   "license": "MIT",
   "scripts": {
-    "build": "node scripts/updateVersion.js && node scripts/clean.js && rollup -c && node scripts/copyArtifacts.js"
+    "build": "node scripts/updateVersion.js && node scripts/clean.js && rollup -c && node scripts/copyArtifacts.js && mkdir dist/data"
   },
   "repository": {
     "type": "git",

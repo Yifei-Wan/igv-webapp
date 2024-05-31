@@ -44,7 +44,7 @@ window.fetchFileList = async function(path = '') {
     console.info("Fetch input path: ", path);
     try {
         if (path === '') {
-            path = `/dist${path}`;
+            path = `/dist`;
         };
         console.info("Current work diretory: ", path);
         const response = await fetch(path);
@@ -64,13 +64,19 @@ window.fetchFileList = async function(path = '') {
             // Hide the "Go Back" button if in the root directory
             goBackButton.style.display = 'none';
         }
-
-        files.forEach(file => {
+        if (path === "/dist") { // In the ROOT, only shows data directory
             const li = document.createElement('li');
-            const filePath = path + '/' + file.textContent.trim();
-            li.innerHTML = `<a href="#" data-url="${filePath}" onclick="selectFile('${filePath}'); return false;">${file.textContent}</a>`;
+            const filePath = path + '/' + 'data';
+            li.innerHTML = `<a href="#" data-url="${filePath}" onclick="selectFile('${filePath}'); return false;">data</a>`;
             fileList.appendChild(li);
+        } else {
+            files.forEach(file => {
+                const li = document.createElement('li');
+                const filePath = path + '/' + file.textContent.trim();
+                li.innerHTML = `<a href="#" data-url="${filePath}" onclick="selectFile('${filePath}'); return false;">${file.textContent}</a>`;
+                fileList.appendChild(li);
         });
+        }
     } catch (error) {
         console.error('Error fetching file list:', error);
     }
