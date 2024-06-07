@@ -67,15 +67,18 @@ window.fetchFileList = async function(path = '') {
         if (path === "/dist") { // In the ROOT, only shows data directory
             const li = document.createElement('li');
             const filePath = path + '/' + 'data';
-            li.innerHTML = `<a href="#" data-url="${filePath}" onclick="selectFile('${filePath}'); return false;">data</a>`;
+            li.innerHTML = `<a href="#" data-url="${filePath}" onclick="selectFile('${filePath}'); return false;"><i class="fa fa-folder"></i> data</a>`;
             fileList.appendChild(li);
         } else {
-            files.forEach(file => {
-                const li = document.createElement('li');
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
                 const filePath = path + '/' + file.textContent.trim();
-                li.innerHTML = `<a href="#" data-url="${filePath}" onclick="selectFile('${filePath}'); return false;">${file.textContent}</a>`;
+                const type = await isFileOrDirPath(filePath);
+                const icon = type === 'dir' ? '<i class="fa fa-folder"></i>' : '<i class="fa fa-file"></i>';
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#" data-url="${filePath}" onclick="selectFile('${filePath}'); return false;">${icon} ${file.textContent}</a>`;
                 fileList.appendChild(li);
-        });
+            }
         }
     } catch (error) {
         console.error('Error fetching file list:', error);
