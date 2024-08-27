@@ -102,7 +102,6 @@ async function isFileOrDirPath(filePath) {
         const data = await response.json();
         return data.type; // Return the type ('file' or 'dir')
     } catch (error) {
-        console.error('Error checking file or directory:', error);
         throw error; // Handle the error as needed
     }
 }
@@ -137,27 +136,64 @@ window.selectFile = async function(filePath) {
     }
 
 function handleOkClick(trackLoadHandler) {
-    return function() {
+    return async function() {
         console.info('Selected Track file URL:', selectedFileUrl);
         const configurations = [];
-        if (selectedFileUrl) {
-            configurations.push({"url": selectedFileUrl});
-            // Clear the selectedFileUrl and remove 'selected' class
-            selectedFileUrl = '';
-            const fileLinks = document.querySelectorAll('#fileList a.selected');
-            fileLinks.forEach(link => {
-                link.classList.remove('selected');
-            });
-            // Load track file(s)
-            if (configurations.length > 0) {
-                trackLoadHandler(configurations);
+        
+        if (selectedFileUrl.endsWith('.bam')) {
+            const baseFileUrl = selectedFileUrl.slice(0, -4); // Remove the .bam extension
+            const primaryIndexUrl = baseFileUrl + ".bai";
+            const alternativeIndexUrl = selectedFileUrl + ".bai";
+            
+            let selectedIndexUrl = primaryIndexUrl;
+            
+            try {
+                const primaryFileType = await isFileOrDirPath(primaryIndexUrl);
+                if (primaryFileType !== 'file') {
+                    throw new Error('Primary index file does not exist');
+                    selectedIndexUrl = "";
+                }
+            } catch (error) {
+                console.warn(`Primary index file does not exist: ${primaryIndexUrl.split('/').pop()}`);
+                try {
+                    const alternativeFileType = await isFileOrDirPath(alternativeIndexUrl);
+                    if (alternativeFileType === 'file') {
+                        selectedIndexUrl = alternativeIndexUrl;
+                    } else {
+                        const primaryFileName = primaryIndexUrl.split('/').pop();
+                        const alternativeFileName = alternativeIndexUrl.split('/').pop();
+                        const selectedFileName = selectedFileUrl.split('/').pop();
+                        console.warn(`Neither primary (${primaryFileName}) nor alternative (${alternativeFileName}) index file exists for ${selectedFileName}.`);
+                    }
+                } catch (altError) {
+                    console.error('Error checking alternative index file:', altError);
+                }
+            }
+            
+            console.info('Selected Index file URL:', selectedIndexUrl.split('/').pop());
+            if (selectedFileUrl) {
+                configurations.push({ url: selectedFileUrl, indexURL: selectedIndexUrl });
+                // Clear the selectedFileUrl and remove 'selected' class
+                selectedFileUrl = ''; // Ensure this does not affect other parts of your application
+                
+                const fileLinks = document.querySelectorAll('#fileList a.selected');
+                fileLinks.forEach(link => {
+                    link.classList.remove('selected');
+                });
+
+                // Load track file(s)
+                if (configurations.length > 0) {
+                    trackLoadHandler(configurations);
+                }
+            } else {
+                console.log('No files selected.');
             }
         } else {
-            console.log('No files selected.');
+            console.warn('Selected file is not a .bam file.');
         }
     }
 }
-
+    
 function loadTracksFromServerWidget(
     $igvMain,
     trackFromServerModalId,
