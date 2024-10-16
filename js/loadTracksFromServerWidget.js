@@ -173,27 +173,29 @@ function handleOkClick(trackLoadHandler) {
             console.info('Selected Index file URL:', selectedIndexUrl.split('/').pop());
             if (selectedFileUrl) {
                 configurations.push({ url: selectedFileUrl, indexURL: selectedIndexUrl });
-                // Clear the selectedFileUrl and remove 'selected' class
-                selectedFileUrl = ''; // Ensure this does not affect other parts of your application
-                
-                const fileLinks = document.querySelectorAll('#fileList a.selected');
-                fileLinks.forEach(link => {
-                    link.classList.remove('selected');
-                });
-
-                // Load track file(s)
-                if (configurations.length > 0) {
-                    trackLoadHandler(configurations);
-                }
-            } else {
-                console.log('No files selected.');
             }
+            } else {
+                // If the file is not a .bam file, set it directly
+                configurations.push({ url: selectedFileUrl });
+            }
+
+        // Clear the selectedFileUrl and remove 'selected' class
+        selectedFileUrl = ''; // Ensure this does not affect other parts of your application
+        
+        const fileLinks = document.querySelectorAll('#fileList a.selected');
+        fileLinks.forEach(link => {
+            link.classList.remove('selected');
+        });
+
+        // Load track file(s)
+        if (configurations.length > 0) {
+            trackLoadHandler(configurations);
         } else {
-            console.warn('Selected file is not a .bam file.');
+            console.log('No files selected.');
         }
     }
-}
-    
+}    
+
 function loadTracksFromServerWidget(
     $igvMain,
     trackFromServerModalId,
